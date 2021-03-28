@@ -1,0 +1,118 @@
+---
+title: Cal Poly Basketball 2015-2016
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+bball = read.table("https://raw.githubusercontent.com/kbodwin/ShinyLabs/master/Datasets/cp_bball.csv", header = TRUE)
+```
+
+## The Dataset
+
+```{r}
+bball %>% tail()
+```
+The dataset has information about the Cal Poly basketball team from the 2015-2016 season. This includes info such as their opponents, points scored by both teams, game dates, their locations, results, and more.
+
+
+##   Is Cal Poly a worse than average team?
+
+```{r}
+bball %>% count(Team.Result)
+```
+```{r}
+ggplot(bball, aes(x = Team.Result)) +
+  geom_bar(fill = c("red","green")) +
+  ggtitle("2015-16 Season Cal Poly Basketball Team Wins and Losses") +
+  xlab("Result") +
+  ylab("Number")
+```
+```{r}
+a = 8/27
+paste("Win Percentage = ", a)
+```
+
+
+In the 2015-2016 season, Cal Poly won 8 games and lost 19 games. This means they won 29.63% of their games. Cal Poly is not an average team; they are a below average team since they won below significantly below than 50% of their games.
+
+## Was Cal Poly more likely to win at home more than away?
+
+```{r}
+ggplot(bball, aes(x = Team.Result, fill = Team.Result)) +
+  geom_bar() +
+  facet_grid(~Team.Location) +
+  ggtitle(label = "Cal Poly Team Results: Home vs. Away 2015 -2016") +
+  scale_fill_manual(values = c("dark green", "yellow")) +
+  xlab("Result") +
+  ylab("Amount")
+```
+
+
+```{r}
+bball %>% count(Team.Location, Team.Result)
+```
+```{r}
+3/15
+```
+```{r}
+5/12
+```
+
+Cal Poly won 41.67% of its home games and 20% of its away games. Therefore, Cal Poly is much more likely to win at home than away. Home court advantage and support, along with other external factors, probably has a positive impact on their play at home compared to on the road.
+
+
+## Does Cal Poly score more at home than away?
+```{r}
+ggplot(bball, aes(x = as.factor(Team.Location), y = Team.Score, fill = Team.Location)) +
+  geom_boxplot() +
+  scale_fill_manual(values = c("dark green", "yellow")) +
+  ggtitle("Cal Poly Basketball Opponent Scores 2015-2016 Season")
+  xlab("Team Location")
+  ylab("Team Score")
+```
+
+```{r}
+bball %>% group_by(Team.Location) %>% summarize_at(vars(Team.Score), funs(mean))
+```
+```{r}
+bball %>% group_by(Team.Location) %>% summarize_at(vars(Team.Score), funs(sd))
+```
+
+In Home Games, Cal Poly scored an average of 73.42 points with a standard deviation of 10.14 points. In Away Games, Cal Poly scored an average of 71.67 points with a standard deviation of 11.81 points. As a result, Cal Poly is a much better team on offense at Home compared to on the road where they played 3 more games.
+
+
+## Does Cal Poly truly play better at home?
+
+
+```{r}
+bball <- bball %>%
+  mutate(
+    Opponent.Team.Location = factor(Team.Location,
+                                    labels = c("Home", "Away")
+    )
+    )
+```
+
+```{r}
+ggplot(bball, aes(x = as.factor(Opponent.Team.Location), y = Opponent.Score, fill = Opponent.Team.Location)) +
+  geom_boxplot() +
+  scale_fill_manual(values = c("dark green", "yellow")) +
+  ggtitle("Cal Poly Basketball Opponents 2015-2016 Season")
+  xlab("Opponent Team Location")
+  ylab("Score")
+```
+
+
+“Even if Cal Poly didn’t score much more at home than away, they still played better. This is because they played better defense at home, so the scores overall were lower.”
+After the analysis of our opponents teams' scoring, it seems that this statement is accurate. Although Cal Poly doesn't score may not score much more, their defense seems to improve a lot. Cal Poly holds their opponent to about 71.3 points instead of the 79 points average for away games. The 71.33 is actually lower than their scoring average, which means in total they are scoring more than they are getting scored on. No team scored 100 on them at home, unlike on the road. This would account for why they win about 20% more home games than away games. 
+
+
+
