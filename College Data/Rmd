@@ -1,0 +1,107 @@
+---
+title: "College Data"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+colleges <- read_csv("https://www.dropbox.com/s/1ja0pnpiaoh9ykl/colleges1995.csv?dl=1")
+```
+
+```{r}
+colleges <- colleges %>% mutate(
+  Name = gsub("California State Univ. at", "CSU", Name),
+  Name = gsub("California State University at", "CSU", Name),
+  Name = gsub("California Polytechnic", "Cal Poly", Name),
+  Name = gsub("California Poly", "Cal Poly", Name),
+  Name = gsub("University of California at", "UC", Name)
+)
+```
+
+##  Adjusting and Cleaning Data
+```{r}
+CA_public <- colleges %>%
+  filter(State == "CA" & Type == "Public") %>%
+  select(Name, Avg.SAT, Acceptance.Rate, Size, Tuition) %>%
+  drop_na()
+```
+drop_na() in the fourth line removed all the times in the dataset where there were rows containing missing values.
+
+
+##  Querying Data
+```{r}
+colleges %>% arrange(Tuition)
+```
+
+Franklin and Marshall has the highest out of state tuition in this data at $24,940.
+
+```{r}
+colleges %>% arrange(Acceptance.Rate)
+```
+
+Stanford University has the lowest acceptance rate in this data at 21.5%.
+
+```{r}
+CA_public %>% arrange(Size)
+```
+
+San Diego State is the largest public university in California.
+
+```{r}
+colleges <- colleges %>%
+  mutate(
+    BFB = factor((Avg.SAT) / (Tuition * Acceptance.Rate)))
+
+colleges %>% arrange(BFB)
+  
+```
+
+In my opnion, Boise State University has the best "bang for your buck."
+
+##  Plot
+```{r}
+ggplot(colleges, aes(x = Tuition, fill = Type)) +
+  geom_bar() +
+  facet_grid(~Type) +
+  stat_bin(binwidth = 787.76)
+```
+```{r}
+ggplot(colleges, aes(x = as.factor(Type), y = Size, fill = Type)) +
+  geom_boxplot() +
+  xlab("Type") +
+  ylab("Size")
+```
+```{r}
+States <- filter(colleges, State == "CA"| State == "NY"| State == "TX")
+
+ggplot(States, aes(x = State, fill = Type)) +
+  geom_bar()
+```
+
+```{r}
+ggplot(colleges, aes(x = Avg.SAT, y = Tuition)) +
+  geom_point() +
+  facet_grid(~Type)
+```
+
+
+##  Questions
+
+1. There are more private schools than public schools.
+
+2. Yes, private schools tend to charge more than public schools.
+
+3. The higher the average SAT score of admitted students, the higher the out of state tuition.
+
+4. The relationship is a lot stronger for private schools than for public schools since, at the same average SAT score, private schools are more expensive than public schools.
+
+5. Out of Texas, California, and New York, Texas most favors Public schools.
+
+6. No, public schools area a lot larger than private schools.
