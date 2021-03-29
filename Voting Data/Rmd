@@ -1,0 +1,31 @@
+---
+title: "Voting Data"
+author: "Pranav Bhagat"
+date: "11/20/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+```{r}
+nz_bird <- readr::read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-11-19/nz_bird.csv")
+head(nz_bird)
+b <- nz_bird %>% drop_na()
+```
+
+`
+
+
+```{r}
+updated <- nz_bird %>% drop_na()
+ggplot(updated, aes(x=hour, fill=vote_rank)) +
+  ggtitle("Number of Votes by Hour")+
+  geom_bar()
+  
+ggplot(updated, aes(x=date, fill=vote_rank)) +
+  ggtitle("Number of Votes by Date")+
+  geom_bar()
+```
