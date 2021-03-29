@@ -1,0 +1,28 @@
+---
+author: "Pranav Bhagat"
+title: "Biking vs. Walking"
+date: "11/10/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+commute_mode <- readr::read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-11-05/commute.csv")
+```
+
+```{r}
+commute_mode %>% head()
+```
+
+
+```{r}
+ggplot(commute_mode, aes(x = as.factor(mode), y = log(percent), fill = mode))+
+  geom_boxplot()+
+  facet_grid(~city_size)+
+  ggtitle("Biking vs. Walking in Cities")+
+  xlab("Mode")
+```
