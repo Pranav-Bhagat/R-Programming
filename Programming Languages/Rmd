@@ -1,0 +1,29 @@
+---
+title: "Programming Languages"
+author: "Pranav Bhagat"
+date: "11/16/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+```{r}
+cran_code <- readr::read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-11-12/loc_cran_packages.csv")
+```
+
+```{r}
+nofilter <- filter(cran_code, language == "C" | language == "Java" | language ==
+"Javascript" | language == "HTML" | language == "Python" | language == "C++" 
+| language == "R" | language == "SAS")
+  
+```
+
+```{r}
+ggplot(nofilter, aes(x = as.factor(language), y = log(code), fill = language))+
+  geom_boxplot()+
+  ggtitle("Comparing of lines of code for different languages")+
+  xlab("Language")
+```
