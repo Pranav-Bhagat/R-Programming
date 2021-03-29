@@ -1,0 +1,39 @@
+---
+author: "Pranav Bhagat"
+title: "Horror Movies by Language"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+horror_movies <- readr::read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-10-22/horror_movies.csv")
+```
+
+```{r}
+head(horror_movies)
+```
+
+```{r}
+Bhaasha <- filter(horror_movies, language == "English" | language == "Hindi" | language == "Chinese" | language == "Spanish")
+
+ggplot(Bhaasha, aes(x = as.factor(language), y = review_rating, fill = language)) +
+  geom_boxplot() +
+  ggtitle("Comparing Horror Movie Quality for Most Popular Languages in the World") +
+  xlab("Language") +
+  ylab("Review Rating (out of 10)")
+```
+
+This graph illustrates the differences in horror movie ratings when we look at the most popular languages in the world.
+Spanish films had the highest median rating, while Hindi had the lowest, which I'm not super surprised by since being Indian
+I've watched a lot of Hindi films growing up with my parents and I never really liked any of them. Also, English films and Hindi 
+films have the highest variability, which makes sense due to the presence of Hollywood and Bollywood in the US and India, 
+respectively, leading to a lot of movies being made. And with a large quantity of movies being made, there are a lot of movies
+that are bad and those that are good, and then most are in between. In addition, the US has a lot of outliers with really
+high review ratings, indicating that the US makes a lot of really good horror movies.
