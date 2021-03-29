@@ -1,0 +1,56 @@
+---
+title: "Nintendo and Sega"
+output: html_document
+---
+  
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(readr)
+library(tidyverse)
+```
+
+```{r}
+vgsales <- read_csv("vgsales.csv")
+```
+##  Replicate a plot
+```{r}
+Nintendo_Sega <- filter(vgsales, Publisher=="Nintendo" | Publisher=="Sega")
+
+ggplot(Nintendo_Sega, aes(x=Publisher, y=log(Global_Sales), fill = Publisher))+
+  geom_boxplot() + ggtitle("Comparing Nintendo and Sega") + ylab("Global
+Sales(log scale)")
+
+```
+
+
+##  Rise in Violent Video Games?
+```{r}
+old <- 0
+new <-0
+
+j <- nrow(vgsales)
+for (i in 1:j){
+  if(vgsales %>% slice(i) %>% pull(Genre) == "Shooter"){
+    if(vgsales %>% slice(i) %>% pull(Year) < 2000)
+      old = old + 1
+    if(vgsales %>% slice(i) %>% pull(Year) > 1999)
+      new = new + 1
+  }
+}
+old 
+new
+```
+```
+Prior to the 2000s, only 167 of the video games in our dataset were categorized as shooters. After the 2000s, 1143 of the video games in our dataset were categorized as shooters. Because of this drastic increase, parents concern with the rise in violent video games are merited and reasonable.
+```
+
+
+##  Pivot and Sales
+```{r}
+vgsales %>%
+  select(Name, Publisher, NA_Sales, EU_Sales, JP_Sales) %>%
+  pivot_longer(cols = c(NA_Sales, EU_Sales, JP_Sales), names_to = "Location", values_to = "Num_Sales")
+```
