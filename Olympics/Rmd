@@ -1,0 +1,102 @@
+---
+title: "Olympics"
+author: "Pranav Bhagat"
+date: "12/3/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+```{r}
+library(tidyverse)
+setwd("~/Downloads")
+medals <- read.csv("medal_winners.csv")
+```
+##  1
+
+```{r}
+onlymales <- filter(medals, Sex == "M")
+onlyfemales <- filter(medals, Sex == "F")
+onlymales %>% count(Name) %>% arrange(desc(n))
+onlyfemales %>% count(Name) %>% arrange(desc(n))
+```
+
+The male athlete with the most medals is Michael Phelps with 28 and the female athlete with the most medals is Larysa Semenivna Latynina with 18.
+
+
+##  2
+```{r}
+one_name <- medals[!duplicated(medals$Name), ]
+country_winners <- filter(one_name, Medal == "Gold")
+most_gold_metals <- country_winners %>% group_by(Team) %>% count(Medal)
+most_gold_metals %>% arrange(desc(n))
+
+```
+
+The Soviet Union has the second most gold medals with 600.
+
+##  3
+```{r}
+mbasketball <- filter(medals, Event == "Basketball Men's Basketball")
+wbasketball <- basketball <- filter(medals, Event == "Basketball Women's Basketball")
+mbasketball %>% arrange(Year)
+wbasketball %>% arrange(Year)
+```
+Men's basketball was first introduced in 1936 and the Women's basketball was first introduced 1976.
+
+
+
+##  4
+```{r}
+americans <- filter(medals, Sex ==  "F", NOC == "USA", Year == "2016")
+americans %>% group_by(Sex) %>% summarize_at(vars(Weight, Height), funs(mean))
+```
+
+The average height of the Americans is 176 units of height and the average weight is 69.1 units of weight.
+
+##  5
+```{r}
+one_city <- medals[!duplicated(medals$Games), ]
+total_count <- one_city %>% count(City)
+total_count %>% arrange(desc(n))
+```
+
+Athina and London have hosted the most Olympic Games with 3 each.
+
+##Recreate a Plot
+```{r}
+high_countries <- filter(medals, Team == "United States" | Team == "Soviet Union", Medal == "Gold", Year > 1949, Year < 1990)
+
+high_countries <- high_countries %>% distinct(Event, Year, .keep_all = TRUE)
+
+ggplot(high_countries, aes(x = Year, fill = Team))+
+  geom_bar()+
+  scale_x_continuous(breaks = c(1952, 1956, 1960, 1964, 1968, 1972, 1976, 1980, 1984, 1988))+
+  ggtitle("Gold Medals in Olympic Games between 1950 and 1989")
+
+```
+
+The years 1980 and 1984 standout to me because of the lobsided number of medals won by each country. 
+In 1980, the Soviet Union hosted the Olympics and the United States hosted it in 1984. 
+The Soviets won the majoirty of the medals in 1980 and the United States won the majoirty in 1984. 
+This could be due to the Soviet-Afghan war which led the US to protest the Olympics when hosted by the
+Soviets and rhe USSR to boycott the Olympics when it was hosted by the United States.
+
+
+##Open Ended Question
+```{r}
+top10 <- filter(medals, Team == "United States" | Team == "China" | Team == "Great Britain" | Team == "Italy" | Team == "Hungary" | Team == "Sweden" | Team == "Australia" | Team == "France" | Team == "Soviet Union" | Team == "Germany")
+
+ggplot(top10, aes(x = as.factor(Team), y = Height, fill = Team)) +
+  geom_boxplot()
+```
+
+
+The graph above displays the 10 countries with the most gold medals. China is a major outlier as 
+their height is lower than the other countries. The US seems to have the greatest variability, along
+with the Soviet Union, because of the large amount of athletes they had in the Olympics compared to other 
+countries. We can also see that most of the medians of height are around the same for countries with the top 10 medals.
